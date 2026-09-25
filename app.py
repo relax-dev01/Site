@@ -1,46 +1,74 @@
 import streamlit as st
 
-st.set_page_config(page_title="TurboDeals Analiz", page_icon="🚗", layout="centered")
+# Səhifə konfiqurasiyası
+st.set_page_config(page_title="TurboDeals - Avtomobil Elanları", page_icon="🚗", layout="wide")
 
-st.title("🚗 Turbo.az Elan Analizatoru")
-st.write("Elanın mətnini və qiymətini daxil edin, sistem bazar dəyəri ilə müqayisə edib anomaliyanı yoxlasın.")
+# Xüsusi CSS üslubları (Turbo dizaynına oxşatmaq üçün)
+st.markdown("""
+    <style>
+    .main { background-color: #f4f5f7; }
+    .car-card {
+        background-color: white;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        margin-bottom: 15px;
+    }
+    .price { font-size: 20px; font-weight: bold; color: #d9534f; }
+    .car-title { font-size: 16px; font-weight: bold; color: #333; }
+    .car-info { font-size: 13px; color: #777; }
+    </style>
+""", unsafe_allow_html=True)
 
-# İstifadəçi girişləri
-car_title = st.text_input("Maşının Adı / Modeli", "BMW 320, 2018")
-listing_price = st.number_input("Elandakı Qiymət (AZN)", min_value=0, value=21000)
-market_avg_price = st.number_input("Bazarın Orta Qiyməti (AZN)", min_value=0, value=29000)
-description = st.text_area("Elanın Açıqlama Mətni", "Maşın ideal vəziyyətdədir, heç bir xərc tələb etmir, bezkraska.")
+# Yuxarı Başlıq / Menyu
+st.markdown("<h1>🚗 TurboDeals <span style='font-size:16px; color:gray;'>Azərbaycanın Onlayn Avtomobil Bazarı</span></h1>", unsafe_allow_html=True)
+st.markdown("---")
 
-if st.button("Analiz Et"):
-    st.markdown("---")
-    st.subheader("📊 Analiz Nəticəsi")
-    
-    # Açar sözlər
-    problem_keywords = ['udar', 'vuruq', 'dəyişən', 'mator', 'karobka', 'xərc', 'kraska', 'rənglənib', 'problemli']
-    positive_keywords = ['ideal', 'zavod', 'bezkraska', 'orijinal', 'heç bir xərc yoxdur']
-    
-    desc_lower = description.lower()
-    found_problems = [word for word in problem_keywords if word in desc_lower]
-    found_positives = [word for word in positive_keywords if word in desc_lower]
-    
-    # Fərq hesablama
-    diff = listing_price - market_avg_price
-    diff_percent = (diff / market_avg_price) * 100
-    
-    st.write(f"**Qiymət Fərqi:** {round(diff_percent, 1)}% (Bazar ortalamasından {'baha' if diff > 0 else 'ucuz'})")
-    
-    # Status təyini
-    if diff_percent <= -20:
-        if len(found_problems) == 0:
-            st.error("🚨 **ANOMAL UCUZ!** Qiymət bazardan çox aşağıdır və açıqlamada heç bir problem qeyd olunmayıb. Fırıldaq və ya gizli ciddi problem ola bilər!")
-        else:
-            st.warning("⚠️ **Güzəştli / Problemli Təklif:** Qiymət ucuzdur, amma açıqlamada qüsurlar aşkarlandı.")
-    elif diff_percent >= 15:
-        st.warning("📈 **Bazar Qiymətindən Bahadır!**")
-    else:
-        st.success("✅ **Normal Qiymət Aralığı.**")
-        
-    # Tapılan detallar
-    st.write("**Açıqlamadan Tapılanlar:**")
-    st.write(f"- Mənfi/Qüsur sözləri: {found_problems if found_problems else 'Tapılmadı'}")
-    st.write(f"- Müsbət sözlər: {found_positives if found_positives else 'Tapılmadı'}")
+# Yan Panel (Filtrlər)
+st.sidebar.header("🔍 Axtarış və Filtrlər")
+selected_brand = st.sidebar.selectbox("Marka", ["Bütün markalar", "BMW", "Mercedes", "Toyota", "Kia", "Hyundai"])
+selected_city = st.sidebar.selectbox("Şəhər", ["Bütün şəhərlər", "Bakı", "Gəncə", "Sumqayıt", "Şəki"])
+price_range = st.sidebar.slider("Qiymət (AZN)", 0, 100000, (5000, 50000))
+sort_by = st.sidebar.selectbox("Sıralama", ["Yeni elanlar", ucuzdan baha, bahadan ucuza])
+
+st.sidebar.markdown("---")
+st.sidebar.info("💡 Bu səhifə tamamilə pulsuzdur və heç bir ödəniş tələb etmir.")
+
+# Əsas səhifədə axtarış sətri
+search_query = st.text_input("🔍 Modellərə görə axtar (məsələn: 320, C 200, Prius)...", "")
+
+st.subheader("📢 Elanlar Siyahısı")
+
+# Nümunə elan verilənləri (bunu istədiyin kimi artıra bilərsən)
+listings = [
+    {"title": "BMW 320", "year": 2018, "engine": "2.0 L", "km": "75,000 km", "price": 28500, "city": "Bakı", "desc": "Ideal veziyyetde, bezkraska."},
+    {"title": "Mercedes C 200", "year": 2017, "engine": "1.6 L", "km": "90,000 km", "price": 24000, "city": "Gəncə", "desc": "Heç bir xərc tələb etmir."},
+    {"title": "Toyota Prius", "year": 2013, "engine": "1.8 L", "km": "160,000 km", "price": 14200, "city": "Bakı", "desc": "Şəhər içi az yanacaq işlədir."},
+    {"title": "Kia Optima", "year": 2019, "engine": "2.4 L", "km": "60,000 km", "price": 31000, "city": "Sumqayıt", "desc": "Full komplektasiya."}
+]
+
+# Filtrləmə məntiqi
+filtered_listings = listings
+if selected_brand != "Bütün markalar":
+    filtered_listings = [l for l in filtered_listings if selected_brand.lower() in l['title'].lower()]
+
+if selected_city != "Bütün şəhərlər":
+    filtered_listings = [l for l in filtered_listings if l['city'] == selected_city]
+
+if search_query:
+    filtered_listings = [l for l in filtered_listings if search_query.lower() in l['title'].lower() or search_query.lower() in l['desc'].lower()]
+
+# Elanları səhifədə kartlar şəklində göstərmək
+if not filtered_listings:
+    st.warning("Axtarışınıza uyğun elan tapılmadı.")
+else:
+    for item in filtered_listings:
+        with st.container():
+            st.markdown(f"""
+                <div class="car-card">
+                    <div style="float: right;" class="price">{item['price']} ₼</div>
+                    <div class="car-title">{item['title']}, {item['year']}</div>
+                    <div class="car-info">{item['engine']} • {item['km']} • {item['city']}</div>
+                    <p style="margin-top: 8px; font-size: 14px; color: #444;">{item['desc']}</p>
+                </div>
+            """, unsafe_allow_html=True)
