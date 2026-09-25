@@ -26,25 +26,27 @@ st.markdown("---")
 
 # Yan Panel (Filtrlər)
 st.sidebar.header("🔍 Axtarış və Filtrlər")
-selected_brand = st.sidebar.selectbox("Marka", ["Bütün markalar", "BMW", "Mercedes", "Toyota", "Kia", "Hyundai"])
-selected_city = st.sidebar.selectbox("Şəhər", ["Bütün şəhərlər", "Bakı", "Gəncə", "Sumqayıt", "Şəki"])
-price_range = st.sidebar.slider("Qiymət (AZN)", 0, 100000, (5000, 50000))
+selected_brand = st.sidebar.selectbox("Marka", ["Bütün markalar", "BMW", "Mercedes", "Toyota", "Kia", "Hyundai", "Chevrolet"])
+selected_city = st.sidebar.selectbox("Şəhər", ["Bütün şəhərlər", "Bakı", "Gəncə", "Sumqayıt", "Şəki", "Lənkəran"])
 sort_by = st.sidebar.selectbox("Sıralama", ["Yeni elanlar", "Ucuzdan bahaya", "Bahadan ucuza"])
 
 st.sidebar.markdown("---")
 st.sidebar.info("💡 Bu səhifə tamamilə pulsuzdur və heç bir ödəniş tələb etmir.")
 
 # Əsas səhifədə axtarış sətri
-search_query = st.text_input("🔍 Modellərə görə axtar (məsələn: 320, C 200, Prius)...", "")
+search_query = st.text_input("🔍 Modellərə görə axtar (məsələn: F30, 320, C 200, Equinox)...", "")
 
 st.subheader("📢 Elanlar Siyahısı")
 
-# Nümunə elan verilənləri
+# Zənginləşdirilmiş elan verilənləri (BMW və digər modellər)
 listings = [
-    {"title": "BMW 320", "year": 2018, "engine": "2.0 L", "km": "75,000 km", "price": 28500, "city": "Bakı", "desc": "Ideal veziyyetde, bezkraska."},
-    {"title": "Mercedes C 200", "year": 2017, "engine": "1.6 L", "km": "90,000 km", "price": 24000, "city": "Gəncə", "desc": "Heç bir xərc tələb etmir."},
-    {"title": "Toyota Prius", "year": 2013, "engine": "1.8 L", "km": "160,000 km", "price": 14200, "city": "Bakı", "desc": "Şəhər içi az yanacaq işlədir."},
-    {"title": "Kia Optima", "year": 2019, "engine": "2.4 L", "km": "60,000 km", "price": 31000, "city": "Sumqayıt", "desc": "Full komplektasiya."}
+    {"title": "BMW 320", "year": 2018, "engine": "2.0 L", "km": "75,000 km", "price": 28500, "city": "Bakı", "desc": "Ideal veziyyetde, bezkraska, F30 restyling."},
+    {"title": "BMW 328i", "year": 2014, "engine": "2.0 L", "km": "130,000 km", "price": 21500, "city": "Bakı", "desc": "M-paket yığılıb, mator karobka yaxşı."},
+    {"title": "BMW M3", "year": 2021, "engine": "3.0 L", "km": "35,000 km", "price": 78000, "city": "Bakı", "desc": "Full komplektasiya, vuruqsuz gəlib."},
+    {"title": "Mercedes C 200", "year": 2017, "engine": "1.6 L", "km": "90,000 km", "price": 24000, "city": "Gəncə", "desc": "Heç bir xərc tələb etmir, ideal vəziyyətdə."},
+    {"title": "Chevrolet Equinox", "year": 2020, "engine": "1.5 L", "km": "65,000 km", "price": 26000, "city": "Bakı", "desc": "Ailə maşınıdır, səliqəli sürülüb."},
+    {"title": "Toyota Prius", "year": 2013, "engine": "1.8 L", "km": "160,000 km", "price": 14200, "city": "Sumqayıt", "desc": "Şəhər içi az yanacaq işlədir, taksidə olmayıb."},
+    {"title": "Kia Optima", "year": 2019, "engine": "2.4 L", "km": "60,000 km", "price": 31000, "city": "Bakı", "desc": "Full komplektasiya, panorama dam."}
 ]
 
 # Filtrləmə məntiqi
