@@ -29,7 +29,7 @@ st.sidebar.header("🔍 Axtarış və Filtrlər")
 selected_brand = st.sidebar.selectbox("Marka", ["Bütün markalar", "BMW", "Mercedes", "Toyota", "Kia", "Hyundai"])
 selected_city = st.sidebar.selectbox("Şəhər", ["Bütün şəhərlər", "Bakı", "Gəncə", "Sumqayıt", "Şəki"])
 price_range = st.sidebar.slider("Qiymət (AZN)", 0, 100000, (5000, 50000))
-sort_by = st.sidebar.selectbox("Sıralama", ["Yeni elanlar", ucuzdan baha, bahadan ucuza])
+sort_by = st.sidebar.selectbox("Sıralama", ["Yeni elanlar", "Ucuzdan bahaya", "Bahadan ucuza"])
 
 st.sidebar.markdown("---")
 st.sidebar.info("💡 Bu səhifə tamamilə pulsuzdur və heç bir ödəniş tələb etmir.")
@@ -39,7 +39,7 @@ search_query = st.text_input("🔍 Modellərə görə axtar (məsələn: 320, C 
 
 st.subheader("📢 Elanlar Siyahısı")
 
-# Nümunə elan verilənləri (bunu istədiyin kimi artıra bilərsən)
+# Nümunə elan verilənləri
 listings = [
     {"title": "BMW 320", "year": 2018, "engine": "2.0 L", "km": "75,000 km", "price": 28500, "city": "Bakı", "desc": "Ideal veziyyetde, bezkraska."},
     {"title": "Mercedes C 200", "year": 2017, "engine": "1.6 L", "km": "90,000 km", "price": 24000, "city": "Gəncə", "desc": "Heç bir xərc tələb etmir."},
@@ -57,6 +57,12 @@ if selected_city != "Bütün şəhərlər":
 
 if search_query:
     filtered_listings = [l for l in filtered_listings if search_query.lower() in l['title'].lower() or search_query.lower() in l['desc'].lower()]
+
+# Sıralama məntiqi
+if sort_by == "Ucuzdan bahaya":
+    filtered_listings = sorted(filtered_listings, key=lambda x: x['price'])
+elif sort_by == "Bahadan ucuza":
+    filtered_listings = sorted(filtered_listings, key=lambda x: x['price'], reverse=True)
 
 # Elanları səhifədə kartlar şəklində göstərmək
 if not filtered_listings:
